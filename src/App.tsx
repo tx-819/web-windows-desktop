@@ -1,5 +1,13 @@
+import BottomSidebar from "./layout/BottomSidebar";
+import Content from "./layout/Content";
+
 function App() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
+  return (
+    <div className="w-screen h-screen overflow-hidden flex flex-col">
+      <Content />
+      <BottomSidebar />
+    </div>
+  );
 }
 
 export default App;
