@@ -9,6 +9,9 @@ type MousePosition = {
 };
 
 const Content = () => {
+  const [currentDeskTopIcon, setCurrentDeskTopIcon] = useState<number | null>(
+    null
+  );
   const [mousePosition, setMousePosition] = useState<MousePosition>({
     mouseX: null,
     mouseY: null,
@@ -24,6 +27,9 @@ const Content = () => {
   return (
     <div
       className="flex-1 bg-neutral-300"
+      onClick={() => {
+        setCurrentDeskTopIcon(null);
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         setMousePosition({
@@ -32,7 +38,16 @@ const Content = () => {
         });
       }}
     >
-      <DesktopIcon />
+      {[1, 2].map((item) => (
+        <DesktopIcon
+          key={item}
+          clicked={currentDeskTopIcon === item}
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentDeskTopIcon(item);
+          }}
+        />
+      ))}
       <Menu
         keepMounted
         open={mousePosition.mouseY !== null}
