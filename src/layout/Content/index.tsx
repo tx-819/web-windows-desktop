@@ -1,7 +1,15 @@
 import DesktopIcon from "@/components/DesktopIcon";
+import {
+  addFolder,
+  onOffFolderModal,
+  selectFolders,
+} from "@/store/folders/foldersSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { v4 as uuidV4 } from "uuid";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useState } from "react";
+import Modal from "@/components/Modal";
 
 type MousePosition = {
   mouseX: number | null;
@@ -9,7 +17,9 @@ type MousePosition = {
 };
 
 const Content = () => {
-  const [currentDeskTopIcon, setCurrentDeskTopIcon] = useState<number | null>(
+  const dispatch = useAppDispatch();
+  const folders = useAppSelector(selectFolders);
+  const [currentDeskTopIcon, setCurrentDeskTopIcon] = useState<string | null>(
     null
   );
   const [mousePosition, setMousePosition] = useState<MousePosition>({
@@ -38,13 +48,16 @@ const Content = () => {
         });
       }}
     >
-      {[1, 2].map((item) => (
+      {folders.map((item) => (
         <DesktopIcon
-          key={item}
-          clicked={currentDeskTopIcon === item}
+          key={item.id}
+          clicked={currentDeskTopIcon === item.id}
           onClick={(e) => {
             e.stopPropagation();
-            setCurrentDeskTopIcon(item);
+            setCurrentDeskTopIcon(item.id);
+          }}
+          onDoubleClick={() => {
+            dispatch(onOffFolderModal({ id: item.id, modalOpen: true }));
           }}
         />
       ))}
@@ -59,9 +72,36 @@ const Content = () => {
             : undefined
         }
       >
-        <MenuItem onClick={handleClose}>Copy</MenuItem>
+        <MenuItem
+          onClick={() => {
+            dispatch(
+              addFolder({
+                folderName: "文件夹",
+                modalOpen: false,
+                id: uuidV4(),
+              })
+            );
+            handleClose();
+          }}
+        >
+          新建文件夹
+        </MenuItem>
         <MenuItem onClick={handleClose}>Print</MenuItem>
       </Menu>
+      {folders.map((folder) => {
+        if (folder.modalOpen) {
+          return (
+            <Modal
+              key={folder.id}
+              id={folder.id}
+              onClose={() => {
+                dispatch(onOffFolderModal({ id: folder.id, modalOpen: false }));
+              }}
+            />
+          );
+        }
+        return null;
+      })}
     </div>
   );
 };
