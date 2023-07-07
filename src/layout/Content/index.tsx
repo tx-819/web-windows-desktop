@@ -96,10 +96,7 @@ const Content = () => {
               id={folder.id}
               width={folder.modalSize?.width}
               height={folder.modalSize?.height}
-              onResize={(
-                _: any,
-                { size }: { size: { width: number; height: number } }
-              ) => {
+              onResize={(size) => {
                 const { width, height } = size;
                 dispatch(setFolderModalSize({ id: folder.id, width, height }));
               }}
