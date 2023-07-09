@@ -2,7 +2,7 @@ import Draggable from "react-draggable";
 import CloseIcon from "@material-ui/icons/Close";
 import { IconButton } from "@material-ui/core";
 import { createPortal } from "react-dom";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import React from "react";
 
 export type ModalProps = {
@@ -13,16 +13,14 @@ export type ModalProps = {
   onResize?: (size: { width: number; height: number }) => void;
 };
 
-let isMouseDown = false;
-
 const Modal: React.FC<ModalProps> = (props) => {
-  const { onClose, id, width = 300, height = 150, onResize } = props;
-  const ref = React.createRef<HTMLDivElement>();
+  const { onClose, id, onResize, width = 300, height = 150 } = props;
+  const ref = useRef<HTMLDivElement>(null);
 
   return (
     <Draggable handle=".handle" defaultPosition={{ x: 300, y: 150 }}>
       <div
-        className="fixed top-0 left-0 bg-white"
+        className="fixed top-0 left-0 bg-white box-container"
         style={{ width: width + "px", height: height + "px" }}
         ref={ref}
         onContextMenu={(e) => {
@@ -31,24 +29,20 @@ const Modal: React.FC<ModalProps> = (props) => {
       >
         <div className="relative w-full h-full p-2">
           <div
-            className="absolute right-0 w-2 h-[calc(100%-1rem)] top-2 cursor-ew-resize"
-            onMouseDown={(e) => {
-              console.log(e);
-              isMouseDown = true;
-              console.log(ref.current?.getBoundingClientRect().left);
-            }}
-            onMouseMove={(e) => {
-              if (isMouseDown && ref.current) {
+            className="absolute -right-2 w-4 h-[calc(100%-1rem)] top-2 cursor-ew-resize"
+            onMouseDown={() => {
+              document.onmousemove = (e) => {
                 const left = ref.current?.getBoundingClientRect().left;
-                const { clientX } = e;
-                if (clientX > left) {
-                  onResize && onResize({ width: clientX - left + 4, height });
+                if (ref.current && left) {
+                  const { clientX } = e;
+                  if (clientX > left) {
+                    onResize && onResize({ width: clientX - left, height });
+                  }
                 }
-              }
+              };
             }}
             onMouseUp={(e) => {
-              console.log(e);
-              isMouseDown = false;
+              document.onmousemove = null;
             }}
           />
           <div className="flex items-center justify-between handle">
