@@ -3,7 +3,7 @@ import {
   addFolder,
   onOffFolderModal,
   selectFolders,
-  setFolderModalSize,
+  setFolderModalStyle,
 } from "@/store/folders/foldersSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { v4 as uuidV4 } from "uuid";
@@ -94,11 +94,16 @@ const Content = () => {
             <Modal
               key={folder.id}
               id={folder.id}
-              width={folder.modalSize?.width}
-              height={folder.modalSize?.height}
-              onResize={(size) => {
-                const { width, height } = size;
-                dispatch(setFolderModalSize({ id: folder.id, width, height }));
+              modalSize={folder.modalSize}
+              modalPosition={folder.modalPosition}
+              onResize={(size, position) => {
+                dispatch(
+                  setFolderModalStyle({
+                    id: folder.id,
+                    modalSize: size,
+                    modalPosition: position,
+                  })
+                );
               }}
               onClose={() => {
                 dispatch(onOffFolderModal({ id: folder.id, modalOpen: false }));

@@ -2,51 +2,42 @@ import Draggable from "react-draggable";
 import CloseIcon from "@material-ui/icons/Close";
 import { IconButton } from "@material-ui/core";
 import { createPortal } from "react-dom";
-import { useRef } from "react";
 import React from "react";
+import Resizable from "@/components/Resizable";
 
 export type ModalProps = {
   id: string;
   onClose?: (id: string) => void;
-  width?: number;
-  height?: number;
-  onResize?: (size: { width: number; height: number }) => void;
+  modalSize?: { width: number; height: number };
+  modalPosition?: { x: number; y: number };
+  onResize?: (
+    size: { width: number; height: number },
+    position?: { x: number; y: number }
+  ) => void;
 };
 
 const Modal: React.FC<ModalProps> = (props) => {
-  const { onClose, id, onResize, width = 300, height = 150 } = props;
-  const ref = useRef<HTMLDivElement>(null);
-
+  const { onClose, id, onResize, modalSize, modalPosition } = props;
   return (
-    <Draggable handle=".handle" defaultPosition={{ x: 300, y: 150 }}>
+    <Draggable
+      handle=".handle"
+      position={modalPosition}
+      onDrag={(e, position) => {
+        const { x, y } = position;
+        onResize && modalSize && onResize(modalSize, { x, y });
+      }}
+    >
       <div
         className="fixed top-0 left-0 bg-white box-container"
-        ref={ref}
         onContextMenu={(e) => {
           e.stopPropagation();
         }}
       >
-        <div
-          className="relative"
-          style={{ width: width + "px", height: height + "px" }}
+        <Resizable
+          width={modalSize?.width}
+          height={modalSize?.height}
+          onResize={onResize}
         >
-          <div
-            className="absolute -right-2 w-4 h-[calc(100%-1rem)] top-2 cursor-ew-resize"
-            onMouseDown={() => {
-              document.onmousemove = (e) => {
-                const left = ref.current?.getBoundingClientRect().left;
-                if (ref.current && left) {
-                  const { clientX } = e;
-                  if (clientX > left) {
-                    onResize && onResize({ width: clientX - left, height });
-                  }
-                }
-              };
-            }}
-            onMouseUp={(e) => {
-              document.onmousemove = null;
-            }}
-          />
           <div className="flex items-center justify-between handle">
             <div>文件夹</div>
             <div>
@@ -59,7 +50,7 @@ const Modal: React.FC<ModalProps> = (props) => {
               </IconButton>
             </div>
           </div>
-        </div>
+        </Resizable>
       </div>
     </Draggable>
   );
