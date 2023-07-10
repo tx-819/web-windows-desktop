@@ -21,13 +21,15 @@ const Modal: React.FC<ModalProps> = (props) => {
     <Draggable handle=".handle" defaultPosition={{ x: 300, y: 150 }}>
       <div
         className="fixed top-0 left-0 bg-white box-container"
-        style={{ width: width + "px", height: height + "px" }}
         ref={ref}
         onContextMenu={(e) => {
           e.stopPropagation();
         }}
       >
-        <div className="relative w-full h-full p-2">
+        <div
+          className="relative"
+          style={{ width: width + "px", height: height + "px" }}
+        >
           <div
             className="absolute -right-2 w-4 h-[calc(100%-1rem)] top-2 cursor-ew-resize"
             onMouseDown={() => {
