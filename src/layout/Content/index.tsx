@@ -37,7 +37,7 @@ const Content = () => {
 
   return (
     <div
-      className="flex-1 bg-neutral-300"
+      className="w-full h-[calc(100vh-2.5rem)] bg-neutral-300"
       onClick={() => {
         setCurrentDeskTopIcon(null);
       }}
@@ -49,19 +49,21 @@ const Content = () => {
         });
       }}
     >
-      {folders.map((item) => (
-        <DesktopIcon
-          key={item.id}
-          clicked={currentDeskTopIcon === item.id}
-          onClick={(e) => {
-            e.stopPropagation();
-            setCurrentDeskTopIcon(item.id);
-          }}
-          onDoubleClick={() => {
-            dispatch(onOffFolderModal({ id: item.id, modalOpen: true }));
-          }}
-        />
-      ))}
+      <div className="flex flex-col flex-wrap content-start w-full h-full">
+        {folders.map((item) => (
+          <DesktopIcon
+            key={item.id}
+            clicked={currentDeskTopIcon === item.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentDeskTopIcon(item.id);
+            }}
+            onDoubleClick={() => {
+              dispatch(onOffFolderModal({ id: item.id, modalOpen: true }));
+            }}
+          />
+        ))}
+      </div>
       <Menu
         keepMounted
         open={mousePosition.mouseY !== null}
