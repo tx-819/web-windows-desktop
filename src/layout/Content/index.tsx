@@ -11,6 +11,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useState } from "react";
 import Modal from "@/components/Modal";
+import { toggleMenu } from "@/store/windowsMenu/windowsMenuSlice";
 
 type MousePosition = {
   mouseX: number | null;
@@ -40,6 +41,7 @@ const Content = () => {
       className="w-full h-[calc(100vh-2.5rem)] bg-neutral-300"
       onClick={() => {
         setCurrentDeskTopIcon(null);
+        dispatch(toggleMenu({ open: false }));
       }}
       onContextMenu={(e) => {
         e.preventDefault();
@@ -47,6 +49,7 @@ const Content = () => {
           mouseX: e.clientX - 2,
           mouseY: e.clientY - 4,
         });
+        dispatch(toggleMenu({ open: false }));
       }}
     >
       <div className="flex flex-col flex-wrap content-start w-full h-full">
@@ -57,6 +60,7 @@ const Content = () => {
             onClick={(e) => {
               e.stopPropagation();
               setCurrentDeskTopIcon(item.id);
+              dispatch(toggleMenu({ open: false }));
             }}
             onDoubleClick={() => {
               dispatch(onOffFolderModal({ id: item.id, modalOpen: true }));
