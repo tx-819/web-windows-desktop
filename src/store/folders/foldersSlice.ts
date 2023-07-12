@@ -7,7 +7,8 @@ const defaultModalPosition = { x: 300, y: 150 };
 type Folder = {
   id: string;
   folderName: string;
-  modalOpen: boolean;
+  modalOpen?: boolean;
+  isEdit?: boolean;
   modalSize?: { width: number; height: number };
   modalPosition?: { x: number; y: number };
 };
@@ -27,9 +28,39 @@ export const foldersSlice = createSlice({
     addFolder: (state, action: PayloadAction<Folder>) => {
       state.list.push({
         ...action.payload,
+        isEdit: true,
+        modalOpen: false,
         modalSize: defaultModalSize,
         modalPosition: defaultModalPosition,
       });
+    },
+    toggleEdit: (
+      state,
+      action: PayloadAction<{ id: string; isEdit: boolean }>
+    ) => {
+      const index = state.list.findIndex(
+        (item) => item.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.list[index] = {
+          ...state.list[index],
+          isEdit: action.payload.isEdit,
+        };
+      }
+    },
+    setFolderName: (
+      state,
+      action: PayloadAction<{ id: string; folderName: string }>
+    ) => {
+      const index = state.list.findIndex(
+        (item) => item.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.list[index] = {
+          ...state.list[index],
+          folderName: action.payload.folderName,
+        };
+      }
     },
     onOffFolderModal: (
       state,
@@ -68,8 +99,13 @@ export const foldersSlice = createSlice({
   },
 });
 
-export const { addFolder, onOffFolderModal, setFolderModalStyle } =
-  foldersSlice.actions;
+export const {
+  addFolder,
+  onOffFolderModal,
+  setFolderModalStyle,
+  setFolderName,
+  toggleEdit
+} = foldersSlice.actions;
 
 export const selectFolders = (state: RootState) => state.folders.list;
 

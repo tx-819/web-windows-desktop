@@ -55,7 +55,10 @@ const Content = () => {
       <div className="flex flex-col flex-wrap content-start w-full h-full">
         {folders.map((item) => (
           <DesktopIcon
+            id={item.id}
             key={item.id}
+            isEdit={item.isEdit}
+            folderName={item.folderName}
             clicked={currentDeskTopIcon === item.id}
             onClick={(e) => {
               e.stopPropagation();
@@ -83,8 +86,7 @@ const Content = () => {
           onClick={() => {
             dispatch(
               addFolder({
-                folderName: "文件夹",
-                modalOpen: false,
+                folderName: "新建文件夹",
                 id: uuidV4(),
               })
             );
